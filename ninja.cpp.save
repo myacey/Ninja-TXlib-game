@@ -1,0 +1,55 @@
+struct Person
+{
+    int    x;
+    int    y;
+    HDC    pic;
+    bool   visibility;
+    int    speed;
+    double kadr;
+    bool   jump;
+    int    speed_jump;
+    int    time_jump;
+    int    long_jump;
+    int    time_hit;
+};
+
+void drawJumpTime(Person ninja)
+{
+    txSetColor (TX_WHITE);
+    txSetFillColor (TX_TRANSPARENT);
+    txSelectFont("Segoe UI Black", 20);
+    txTextOut(0, 505, "jump");
+    txRectangle(0,528,195,550);
+    txSetFillColor(TX_GRAY);
+    if (ninja.time_hit > 195)
+    {
+        txRectangle(0,528,195,550);
+    }
+    else
+    {
+        txRectangle(0,528,ninja.time_hit,550);
+    }
+}
+  
+//Ниндзя
+int  getNewPersonY (int y, int speed);
+int  getKadrPerson (int x);
+Person moveNinja   (Person ninja);
+
+int getNomerNinja(int nomer_vybora_ninja)
+{
+    int getNomerYasuo(int nomer_vybora_yasuo)
+{
+    if (GetAsyncKeyState('A'))
+    {
+            nomer_vybora_ninja = 0;
+    }
+    else if (GetAsyncKeyState('D'))
+    {
+            nomer_vybora_ninja = 1;
+    }
+
+    return nomer_vybora_ninja;
+}
+}
+

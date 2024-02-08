@@ -1,0 +1,400 @@
+#include "TXLib.h"
+const int WIDTH_MENU = 640;
+const int HEIGHT_MENU = 363;
+
+struct Answer
+{
+    const char* text;
+    int score;
+    int x1;
+    int y1;
+    int x2;
+    int y2;
+
+
+};
+
+bool In(POINT pos, Answer ans);
+bool In(POINT pos, Answer ans)
+{
+    if (
+        pos.x > ans.x1 &&
+        pos.x < ans.x2 &&
+        pos.y > ans.y1 &&
+        pos.y < ans.y2
+    )
+    {
+        return true;
+    }
+
+    else
+    {
+        return false;
+    }
+}
+
+
+struct Question
+{
+    const char* text;
+    Answer rect[4];
+    int otvet;
+    int prav_otvet;
+};
+
+
+
+int main()
+    {
+    txCreateWindow (1300, 550);
+    txDisableAutoPause();
+
+    //Иконка магазина
+    HDC shop = txLoadImage("TEST\\Иконка Магазина.bmp");
+    //Нин
+    HDC ninRight = txLoadImage ("TEST\\нин.bmp");
+    HDC ninLeft = txLoadImage ("TEST\\нин2.bmp");
+    HDC nin = ninRight;
+
+    //Удар
+    HDC hit_pic = txLoadImage ("ggg.bmp");
+
+
+    //Номер вопроса
+    int nomer_voprosa = 0;
+
+    //Фон игры
+    bool draw_fon = false;
+    HDC fon  = txLoadImage("ФОН.bmp");
+
+    //Итог
+    HDC resalt  = txLoadImage("TEST\\Resalt.bmp");
+
+    //Лого игры
+    HDC logo = txLoadImage("TEST\\logo.bmp");
+
+    //Старт
+    bool start = false;
+
+    //Главный вид
+    HDC pic = txLoadImage("TEST\\pic.bmp");
+    bool pic_vis = false;
+    int pic_x = 0;
+    int pic_y = 0;
+
+
+    const int KOL_VOPROSOV = 10;
+
+    Question vopros[500];
+
+    vopros[0] = {"Ваше любимое время суток",
+        {   { "День", 3},                                      { "Ночь", 9},
+            { "И то и то", 5},                                 { "Время суток - понятие растяжимоё", 11}}
+    };
+
+    vopros[1] = {"Любимое оружие?",
+        {   { "Огневое оружие", 3},                            { "Кунаи, сюрикены и тд", 9},
+            { "Я вообще пользуюсь руками", 5},                 { "Супер пупер скрытно)", 11}}
+        };
+
+    vopros[2] = {"Сколько боевых искуств вы знаете",
+        {   { "0", 3},                                         { "3 - 5", 9},
+            { "1 - 2", 5},                                     { "БЕСКОНЕЧНОСТЬ НЕ ПРЕДЕЛ!", 11}}
+        };
+
+    vopros[3] = {"Боитесь высоты?",
+        {   { "Да...", 3},                                     { "Неа", 9},
+            { "Смотря какая...", 5},                           { "Что такое высота?", 11}}
+        };
+
+    vopros[4] = {"Можешь висеть вниз головой?",
+        {   { "Я тебе не акробат", 3},                         { "да, но не бесконечность"},
+            { "Конечн", 9},                                    { "Давай сложнее", 11}}
+        };
+
+    vopros[5] = {"Можешь заползти на стену без  приспособлений?",
+        {   { "Это клуб для акробатов?", 3},                   { "Ну чаво так протсо!?", 11},
+            { "Да, ассассин с рождения", 9},                   { "Не больш чем на свой рост :)", 5}}
+        };
+
+    vopros[6] = {"Ощущаеешь  в себе хоть каплю крови ниндзя?",
+        {   { "Капелючечку", 5},                               { "Хехе потомок 100%", 11},
+            { "Нет", 3},                                       { "Конешн профешон", 9}}
+        };
+
+    vopros[7] = {"Можешь убить?",
+        {   { "Путь ниндзя таков...", 9},                      { "Если понадобится", 5},
+            { "Прям сейчас убиваю", 11},                       { "Неее ты чего", 3}}
+        };
+
+    vopros[8] = {"Любишь музыку? :)",
+        {   { "В уставе ниндзя об этом не сказано", 9},  { "Да, всегда слушаю", 5},
+            { "Обожаю, больше 500 песен в альбоме", 3},         { "Ниндзю ничего не должно отвлекать", 11}}
+        };
+    vopros[9] = {"Почему земля квадратная?",
+        {   { "Квадрат-все лишь предуманый предмет", 9},        { "Вы шо Михаил?", 10},
+            { "Марсель сказал она квадратная", 9},              { "Михаил верховный лидер ситхов так сказал", 11}}
+        };
+
+
+
+
+    for (int nomer = 0; nomer < KOL_VOPROSOV; nomer = nomer + 1)
+    {
+        vopros[nomer].rect[0].x1 =   11;         vopros[nomer].rect[0].y1 = 127;
+        vopros[nomer].rect[0].x2 =  385;         vopros[nomer].rect[0].y2 = 163;
+
+        vopros[nomer].rect[1].x1 =   11;         vopros[nomer].rect[1].y1 = 295;
+        vopros[nomer].rect[1].x2 =  385;         vopros[nomer].rect[1].y2 = 330;
+
+        vopros[nomer].rect[2].x1 =  914;         vopros[nomer].rect[2].y1 = 127;
+        vopros[nomer].rect[2].x2 = 1289;         vopros[nomer].rect[2].y2 = 163;
+
+        vopros[nomer].rect[3].x1 =  914;         vopros[nomer].rect[3].y1 = 295;
+        vopros[nomer].rect[3].x2 = 1289;         vopros[nomer].rect[3].y2 = 330;
+
+        vopros[nomer].otvet = -1000;
+    }
+
+    //Ректы
+    RECT rectStart = { 450,  70,  850, 230};
+    RECT rectNext  = { 935, 513, 1309, 550};
+    RECT rectBack  = {   0, 513,  376, 550};
+
+
+    //Галочка
+    HDC tick = txLoadImage("галочка.bmp");
+    int x_tick = -100;
+    int y_tick = 0;
+    bool tick_vis = false;
+
+
+    //Начало
+
+    txSetFillColor (TX_BLACK);
+    txSetColor     (TX_BLACK);
+    while(start == false)
+    {
+        txBegin();
+        txSetFillColor(TX_WHITE);
+        txClear();
+        txBitBlt(txDC(), 0, 0,1309, 550, fon);
+        txTransparentBlt(txDC(), 0, 0, 1309, 550, logo,0,0, TX_WHITE);
+        //RECT условие
+        //RECT rectStart = { 450,  70, 850, 230};
+        if (In(txMousePos(), rectStart) and txMouseButtons() == 1)
+        {
+            start = true;
+        }
+
+
+
+        txSleep(10);
+        txEnd();
+    }
+
+    double kadr = 0;
+    //Первый вопрос
+    while( nomer_voprosa < KOL_VOPROSOV )
+    {
+        txBegin();
+
+        txCircle (txMouseX(),txMouseY(),20);
+
+        draw_fon = true;
+        pic_vis = true;
+
+
+
+
+        if (draw_fon == true)
+        {
+            txBitBlt(txDC(), 0, 0,1309, 550, fon);
+        }
+        if(pic_vis == true)
+        {
+             txTransparentBlt(txDC(), pic_x, pic_y, 1309, 550, pic,0,0, TX_WHITE);
+        }
+        //Next
+        txDrawText      (935, 513, 1309, 550, "Next");
+        txDrawText      (0  , 513,  376, 550, "Back");
+
+        //Вопрос
+        txSetColor(TX_BLACK);
+        txSelectFont    ("Arial", 40);
+        txDrawText      (326, 5, 987, 58, vopros[nomer_voprosa].text);
+
+        txSelectFont    ("Arial", 25);
+        for (int nomer = 0; nomer < 4; nomer = nomer + 1)
+        {
+            txDrawText( vopros[nomer_voprosa].rect[nomer].x1, vopros[nomer_voprosa].rect[nomer].y1,
+                        vopros[nomer_voprosa].rect[nomer].x2, vopros[nomer_voprosa].rect[nomer].y2,
+                        vopros[nomer_voprosa].rect[nomer].text);
+        }
+        txTransparentBlt(txDC(), x_tick, y_tick, 50, 50, tick,0,0, TX_WHITE);
+
+
+
+        //Ниндзя
+        /*txTransparentBlt(txDC(), (txGetExtentX()-175)/2, (txGetExtentY()-138)/2, 192, 148, nin,0,150*round(kadr), TX_WHITE);
+        //txBitBlt(txDC(), (txGetExtentX()-175)/2, (txGetExtentY()-138)/2, 212, 148, nin,0,150*round(kadr));
+
+        kadr = kadr + 0.04;
+        if (round(kadr) > 9)
+        {
+            kadr = 0;
+        } */
+
+        //КЛик на ответ
+        for (int nomer = 0; nomer < 4; nomer = nomer + 1)
+        {
+            //Первый
+            if (In(txMousePos(), vopros[nomer_voprosa].rect[nomer]) and txMouseButtons() == 1)
+            {
+                //break;
+                if (vopros[nomer_voprosa].rect[nomer].x2 < txGetExtentX()/2)
+                {
+                    x_tick = vopros[nomer_voprosa].rect[nomer].x2 + 15;
+                    nin = ninRight;
+                }
+                else
+                {
+                    x_tick = vopros[nomer_voprosa].rect[nomer].x1 - 65;
+                    nin = ninLeft;
+                }
+
+                y_tick = vopros[nomer_voprosa].rect[nomer].y1;
+
+                vopros[nomer_voprosa].otvet = nomer;
+
+                int width = 0;
+                kadr = 0;
+                while (width < 200)
+                {
+                    txBitBlt(txDC(), (txGetExtentX()-175)/2, (txGetExtentY()-138)/2, 192, 148, fon, (txGetExtentX()-175)/2, (txGetExtentY()-138)/2);
+                    //Ниндзя
+                    txTransparentBlt(txDC(), (txGetExtentX()-175)/2, (txGetExtentY()-138)/2, 192, 148, nin,0,150*round(kadr), TX_WHITE);
+                    //txBitBlt(txDC(), (txGetExtentX()-175)/2, (txGetExtentY()-138)/2, 212, 148, nin,0,150*round(kadr));
+
+                    kadr = kadr + 0.25;
+                    if (round(kadr) > 9)
+                    {
+                        kadr = 0;
+                    }
+
+                    txTransparentBlt(txDC(), (vopros[nomer_voprosa].rect[nomer].x1 + vopros[nomer_voprosa].rect[nomer].x2)/2 - 200/2,
+                                             (vopros[nomer_voprosa].rect[nomer].y1 + vopros[nomer_voprosa].rect[nomer].y2)/2 - 200/2 + 30, width, 125, hit_pic, 0,0, TX_BLACK);
+                    width = width + 7;
+                    txSleep(10);
+
+                }
+                txSleep(150);
+
+            }
+        }
+
+
+
+
+        if ((In(txMousePos(), rectNext) and vopros[nomer_voprosa].otvet >= 0 or
+             In(txMousePos(), rectBack)) and txMouseButtons() == 1)
+        {
+
+            if (In(txMousePos(), rectNext) and nomer_voprosa < KOL_VOPROSOV)
+            {
+                while (txMouseButtons() == 1)
+                {
+                    txSleep (10);
+                }
+
+                nomer_voprosa = nomer_voprosa + 1;
+            }
+
+            else if (nomer_voprosa > 0)
+            {
+                while (txMouseButtons() == 1)
+                {
+                    txSleep (10);
+                }
+
+                nomer_voprosa = nomer_voprosa - 1;
+            }
+            //Нажали Back на первом вопросе
+            else if (nomer_voprosa == 0)
+            {
+                //system("RitzwiMAIN.exe");
+            }
+
+            if (vopros[nomer_voprosa].otvet < 0)
+            {
+                x_tick = -100;
+            }
+            else
+            {
+                int nomer = vopros[nomer_voprosa].otvet;
+                if (vopros[nomer_voprosa].rect[nomer].x2 < txGetExtentX()/2)
+                {
+                    x_tick = vopros[nomer_voprosa].rect[nomer].x2 + 15;
+                }
+                else
+                {
+                    x_tick = vopros[nomer_voprosa].rect[nomer].x1 - 65;
+                }
+                y_tick = vopros[nomer_voprosa].rect[nomer].y1;
+            }
+
+        }
+
+        txEnd();
+    }
+
+    //Итоги
+    txBitBlt(txDC(), 0, 0,1309, 550, fon);
+    txTransparentBlt(txDC(), 0, 0, 1309, 550, resalt,0,0, TX_WHITE);
+    txSelectFont ("Times New Roman",60);
+    txDrawText (326, 2,988,59, "Итог теста BOOM BOOM");
+    txSelectFont ("Times New Roman",30);
+    txTransparentBlt(txDC(), 1000, 320, 270, 237, shop,0,0, TX_WHITE);
+
+
+    int sum = 0;
+    for (int nomer = 0; nomer < 9; nomer = nomer + 1)
+    {
+        /*if (vopros[nomer].otvet == vopros[nomer].prav_otvet)
+        {
+            sum = sum + 1;
+        } */
+        int vybor = vopros[nomer].otvet;
+
+        sum = sum + vopros[nomer].rect[vybor].score;
+    }
+
+
+
+    if (sum > 100)
+    {
+        txDrawText (15 , 300, 1293, 333, "оу шит я тебя боюсь. Ты ниндзя 100.Прошу прощение за моё поведение");
+
+    }
+
+    else if (sum > 70)
+    {
+         txDrawText (15 , 300, 1293, 333, "Ты имеешь все задатки ниндзя. Потренируйся)");
+
+    }
+
+    else if (sum > 50)
+    {
+        txDrawText (15 , 300, 1293, 333, "Тебе ещё многому стоит но я верю ты сможешь стать ниндзей");
+
+    }
+
+    else if (sum > 20)
+    {
+        txDrawText (15 , 300, 1293, 333, "Оу шит. Выбирай другою профессию");
+
+    }
+
+    txSleep(10000);
+    }
+
